@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image: mongo:8
+    container_name: library-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  counter:
+    build: ./counter
+    container_name: library-counter
+    restart: unless-stopped
+    environment:
+      PORT: 4001
+      DATA_DIR: /data
+    volumes:
+      - counter_data:/data
+  app:
+    build: .
+    container_name: library-app
+    restart: unless-stopped
+    depends_on:
+      - mongo
+      - counter
+    environment:
+      PORT: 3000
+      MONGO_URL: mongodb://mongo:27017/library
+      COUNTER_URL: http://counter:4001
+      SESSION_SECRET: change-this-secret
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/uploads
+
+volumes:
+  mongo_data:
+  counter_data:
+  uploads_data:

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title><%= book.title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Библиотека</h1>
+    <nav>
+      <a href="/">Все книги</a>
+      <a href="/books/<%= book.id %>/edit">Редактировать</a>
+      <a href="/api/books/<%= book.id %>/download">Скачать книгу</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2><%= book.title %></h2>
+    <p><strong>Авторы:</strong> <%= book.authors || '—' %></p>
+    <p><strong>Описание:</strong> <%= book.description || '—' %></p>
+    <p><strong>Избранное:</strong> <%= book.favorite ? 'Да' : 'Нет' %></p>
+    <p><strong>Просмотры:</strong> <%= views === null ? 'сервис недоступен' : views %></p>
+
+    <hr>
+
+    <h2>Комментарии</h2>
+    <div id="comments"></div>
+
+    <form id="commentForm">
+      <input id="author" placeholder="Ваше имя" value="<%= user ? user.mail : 'Гость' %>">
+      <textarea id="commentText" placeholder="Комментарий" required></textarea>
+      <button type="submit">Отправить</button>
+    </form>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const bookId = "<%= book.id %>";
+    const comments = document.getElementById('comments');
+
+    function renderComment(comment) {
+      const item = document.createElement('div');
+      item.className = 'comment';
+
+      const author = document.createElement('strong');
+      author.textContent = comment.author + ': ';
+
+      const text = document.createElement('span');
+      text.textContent = comment.text;
+
+      item.appendChild(author);
+      item.appendChild(text);
+      comments.appendChild(item);
+    }
+
+    socket.emit('joinBook', bookId);
+
+    socket.on('comments:init', (items) => {
+      comments.innerHTML = '';
+      items.forEach(renderComment);
+    });
+
+    socket.on('comment:new', renderComment);
+
+    document.getElementById('commentForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const author = document.getElementById('author').value || 'Гость';
+      const text = document.getElementById('commentText').value;
+
+      socket.emit('comment:add', { bookId, author, text });
+      document.getElementById('commentText').value = '';
+    });
+  </script>
+</body>
+</html>

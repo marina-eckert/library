@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактировать книгу</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Редактировать книгу</h1>
+
+    <form id="updateForm" enctype="multipart/form-data">
+      <label>Название
+        <input name="title" value="<%= book.title %>" required>
+      </label>
+
+      <label>Авторы
+        <input name="authors" value="<%= book.authors %>">
+      </label>
+
+      <label>Описание
+        <textarea name="description"><%= book.description %></textarea>
+      </label>
+
+      <label>Избранное
+        <input type="checkbox" name="favorite" <%= book.favorite ? 'checked' : '' %>>
+      </label>
+
+      <label>Файл книги
+        <input type="file" name="fileBook">
+      </label>
+
+      <label>Обложка URL
+        <input name="fileCover" value="<%= book.fileCover %>">
+      </label>
+
+      <button type="submit">Сохранить</button>
+    </form>
+
+    <button id="deleteButton" type="button">Удалить книгу</button>
+    <p><a href="/books/<%= book.id %>">Назад</a></p>
+  </main>
+
+  <script>
+    const form = document.getElementById('updateForm');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const data = new FormData(form);
+
+      const response = await fetch('/api/books/<%= book.id %>', {
+        method: 'PUT',
+        body: data
+      });
+
+      if (response.ok) {
+        location.href = '/books/<%= book.id %>';
+      } else {
+        alert(await response.text());
+      }
+    });
+
+    document.getElementById('deleteButton').addEventListener('click', async () => {
+      if (!confirm('Удалить книгу?')) return;
+
+      const response = await fetch('/api/books/<%= book.id %>', {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        location.href = '/';
+      } else {
+        alert(await response.text());
+      }
+    });
+  </script>
+</body>
+</html>

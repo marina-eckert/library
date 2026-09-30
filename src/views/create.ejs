@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Добавить книгу</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Добавить книгу</h1>
+
+    <form action="/api/books" method="post" enctype="multipart/form-data">
+      <label>Название
+        <input name="title" required>
+      </label>
+
+      <label>Авторы
+        <input name="authors">
+      </label>
+
+      <label>Описание
+        <textarea name="description"></textarea>
+      </label>
+
+      <label>Избранное
+        <input type="checkbox" name="favorite">
+      </label>
+
+      <label>Файл книги
+        <input type="file" name="fileBook">
+      </label>
+
+      <label>Обложка URL
+        <input name="fileCover">
+      </label>
+
+      <button type="submit">Создать</button>
+    </form>
+
+    <p><a href="/">Назад</a></p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Вход</h1>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <form action="/api/user/login" method="post">
+      <label>Email
+        <input type="email" name="mail" required>
+      </label>
+      <label>Пароль
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit">Войти</button>
+    </form>
+
+    <h2>Регистрация</h2>
+
+    <form action="/api/user/signup" method="post">
+      <label>Email
+        <input type="email" name="mail" required>
+      </label>
+      <label>Пароль
+        <input type="password" name="password" required minlength="4">
+      </label>
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <p><a href="/">На главную</a></p>
+  </main>
+</body>
+</html>

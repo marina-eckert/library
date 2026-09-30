@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Профиль</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Профиль</h1>
+    <p><strong>ID:</strong> <%= user.id %></p>
+    <p><strong>Email:</strong> <%= user.mail %></p>
+
+    <form action="/api/user/logout" method="post">
+      <button type="submit">Выйти</button>
+    </form>
+
+    <p><a href="/">На главную</a></p>
+  </main>
+</body>
+</html>

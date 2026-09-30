@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Библиотека</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Библиотека</h1>
+    <nav>
+      <a href="/">Книги</a>
+      <a href="/books/create">Добавить книгу</a>
+      <% if (user) { %>
+        <a href="/api/user/me">Профиль</a>
+      <% } else { %>
+        <a href="/api/user/login">Войти</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Все книги</h2>
+
+    <% if (books.length === 0) { %>
+      <p>Книг пока нет.</p>
+    <% } %>
+
+    <ul class="book-list">
+      <% books.forEach(book => { %>
+        <li>
+          <a href="/books/<%= book.id %>"><%= book.title %></a>
+          <% if (book.authors) { %>
+            — <%= book.authors %>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  </main>
+</body>
+</html>
