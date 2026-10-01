@@ -1,13 +1,31 @@
+import { injectable } from "inversify";
 import { Book } from "../types/book";
 
-export abstract class BooksRepository {
-  abstract createBook(book: Book): void;
+@injectable()
+export class BooksRepository {
+  private books: Book[] = [];
 
-  abstract getBook(id: number): Book | null;
+  createBook(book: Book): void {
+    this.books.push(book);
+  }
 
-  abstract getBooks(): Book[];
+  getBook(id: number): Book | null {
+    return this.books.find((book) => book.id === id) || null;
+  }
 
-  abstract updateBook(id: number, updatedBook: Book): void;
+  getBooks(): Book[] {
+    return this.books;
+  }
 
-  abstract deleteBook(id: number): void;
+  updateBook(id: number, updatedBook: Book): void {
+    const index = this.books.findIndex((book) => book.id === id);
+
+    if (index !== -1) {
+      this.books[index] = updatedBook;
+    }
+  }
+
+  deleteBook(id: number): void {
+    this.books = this.books.filter((book) => book.id !== id);
+  }
 }
