@@ -1,0 +1,7 @@
+services:
+  nest-library:
+    build: .
+    environment:
+      PORT: 3002
+    ports:
+      - "3002:3002"
