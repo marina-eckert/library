@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 async function connectDB() {
   const url = process.env.MONGO_URL || 'mongodb://localhost:27017/library';
@@ -7,9 +7,9 @@ async function connectDB() {
     await mongoose.connect(url);
     console.log('MongoDB connected');
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
+    console.error('MongoDB connection error:', (error instanceof Error ? error.message : String(error)));
     process.exit(1);
   }
 }
 
-module.exports = connectDB;
+export default connectDB;

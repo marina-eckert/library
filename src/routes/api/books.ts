@@ -1,12 +1,13 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const Book = require('../../models/book');
-const upload = require('../../middleware/upload');
+import type { BookForm, BookData } from "../../types/book-form";
+import express from "express";
+import path from "path";
+import fs from "fs";
+import Book from "../../models/book";
+import upload from "../../middleware/upload";
 
 const router = express.Router();
 
-function getBookData(body) {
+function getBookData(body: BookForm): BookData {
   return {
     title: body.title,
     description: body.description || '',
@@ -22,7 +23,7 @@ router.get('/', async (_req, res) => {
     const books = await Book.find().sort({ createdAt: -1 });
     res.json(books);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
   }
 });
 
@@ -42,7 +43,7 @@ router.get('/:id/download', async (req, res) => {
 
     return res.download(filePath, book.fileName || book.fileBook);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
   }
 });
 
@@ -56,7 +57,7 @@ router.get('/:id', async (req, res) => {
 
     return res.json(book);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
   }
 });
 
@@ -76,7 +77,7 @@ router.post('/', upload.single('fileBook'), async (req, res) => {
     const book = await Book.create(data);
     return res.status(201).json(book);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
   }
 });
 
@@ -105,7 +106,7 @@ router.put('/:id', upload.single('fileBook'), async (req, res) => {
     await book.save();
     return res.json(book);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
   }
 });
 
@@ -125,8 +126,8 @@ router.delete('/:id', async (req, res) => {
     await Book.deleteOne({ id: req.params.id });
     return res.send('ok');
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: (error instanceof Error ? error.message : String(error)) });
   }
 });
 
-module.exports = router;
+export default router;

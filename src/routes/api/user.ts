@@ -1,6 +1,6 @@
-const express = require('express');
-const passport = require('passport');
-const User = require('../../models/user');
+import express from "express";
+import passport from "passport";
+import User from "../../models/user";
 
 const router = express.Router();
 
@@ -51,11 +51,11 @@ router.post('/signup', async (req, res) => {
     const user = await User.createWithPassword(mail, password);
 
     req.login(user, (error) => {
-      if (error) return res.status(500).send(error.message);
+      if (error) return res.status(500).send((error instanceof Error ? error.message : String(error)));
       return res.redirect('/api/user/me');
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send((error instanceof Error ? error.message : String(error)));
   }
 });
 
@@ -65,4 +65,4 @@ router.post('/logout', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

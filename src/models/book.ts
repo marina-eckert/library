@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { randomUUID } = require('crypto');
+import mongoose from "mongoose";
+import { randomUUID } from "crypto";
 
 const bookSchema = new mongoose.Schema(
   {
@@ -41,4 +41,4 @@ const bookSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Book', bookSchema);
+export default mongoose.model('Book', bookSchema);

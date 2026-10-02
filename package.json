@@ -2,14 +2,16 @@
   "name": "library",
   "version": "1.0.0",
   "description": "Netology Library homework: Express, EJS, MongoDB, Passport, Socket.IO and Docker",
-  "main": "src/app.js",
+  "main": "dist/app.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "build:ts": "tsc",
+    "start": "node dist/app.js",
+    "prestart": "npm run build",
+    "dev": "nodemon --watch src --ext ts,ejs --exec \"npm run build && node dist/app.js\"",
+    "build": "tsc",
+    "build:ts": "npm run build",
     "dev:ts": "tsc --watch",
     "lint": "eslint .",
-    "start:ts": "node dist/express.js"
+    "start:ts": "npm run build && node dist/express.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -27,7 +29,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
+    "@types/mongoose": "^5.11.96",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.4",
+    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
     "eslint": "^10.11.0",
     "nodemon": "^3.1.10",
     "typescript": "^5.9.3",

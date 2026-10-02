@@ -1,18 +1,18 @@
-const express = require('express');
-const Book = require('../../models/book');
+import express from "express";
+import Book from "../../models/book";
 
 const router = express.Router();
 
-async function getCounter(bookId) {
+async function getCounter(bookId: string): Promise<number | null> {
   const counterUrl = process.env.COUNTER_URL || 'http://localhost:4001';
 
   try {
     await fetch(`${counterUrl}/counter/${bookId}/incr`, { method: 'POST' });
     const response = await fetch(`${counterUrl}/counter/${bookId}`);
-    const data = await response.json();
+    const data = await response.json() as { count?: number };
     return data.count || 0;
   } catch (error) {
-    console.error('Counter service is unavailable:', error.message);
+    console.error('Counter service is unavailable:', (error instanceof Error ? error.message : String(error)));
     return null;
   }
 }
@@ -48,4 +48,4 @@ router.get('/books/:id', async (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

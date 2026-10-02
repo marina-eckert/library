@@ -1,7 +1,8 @@
-const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/user');
+import { Strategy as LocalStrategy } from "passport-local";
+import type { PassportStatic } from "passport";
+import User from "../models/user";
 
-function configurePassport(passport) {
+function configurePassport(passport: PassportStatic) {
   passport.use(
     new LocalStrategy(
       { usernameField: 'mail', passwordField: 'password' },
@@ -19,7 +20,7 @@ function configurePassport(passport) {
             return done(null, false, { message: 'Неверный email или пароль' });
           }
 
-          return done(null, user);
+          return done(null, user || false);
         } catch (error) {
           return done(error);
         }
@@ -27,9 +28,9 @@ function configurePassport(passport) {
     )
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => done(null, user._id.toString()));
 
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser<string>(async (id, done) => {
     try {
       const user = await User.findById(id);
       done(null, user);
@@ -39,4 +40,4 @@ function configurePassport(passport) {
   });
 }
 
-module.exports = configurePassport;
+export default configurePassport;

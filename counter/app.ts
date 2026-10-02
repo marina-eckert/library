@@ -1,6 +1,6 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+import express from "express";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 4001;
@@ -9,16 +9,26 @@ const DATA_FILE = path.join(DATA_DIR, 'counters.json');
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-function readCounters() {
+type Counters = Record<string, number>;
+
+function readCounters(): Counters {
   try {
-    if (!fs.existsSync(DATA_FILE)) return {};
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    if (!fs.existsSync(DATA_FILE)) return Object.create(null) as Counters;
+    const data: unknown = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return Object.create(null) as Counters;
+    const counters: Counters = Object.create(null);
+    for (const [bookId, count] of Object.entries(data)) {
+      if (typeof count === 'number' && Number.isFinite(count) && count >= 0) {
+        counters[bookId] = count;
+      }
+    }
+    return counters;
   } catch {
-    return {};
+    return Object.create(null) as Counters;
   }
 }
 
-function writeCounters(counters) {
+function writeCounters(counters: Counters): void {
   fs.writeFileSync(DATA_FILE, JSON.stringify(counters, null, 2));
 }
 
