@@ -1,11 +1,14 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
-  NotFoundException,
   Param,
-  ParseIntPipe,
+  Post,
+  Put,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
+import { CreateBookDto, UpdateBookDto } from './book.dto';
 
 @Controller('books')
 export class BooksController {
@@ -17,11 +20,22 @@ export class BooksController {
   }
 
   @Get(':id')
-  getBook(@Param('id', ParseIntPipe) id: number) {
-    const book = this.booksService.getBook(id);
-    if (!book) {
-      throw new NotFoundException('Book not found');
-    }
-    return book;
+  getBook(@Param('id') id: string) {
+    return this.booksService.getBook(id);
+  }
+
+  @Post()
+  createBook(@Body() data: CreateBookDto) {
+    return this.booksService.createBook(data);
+  }
+
+  @Put(':id')
+  updateBook(@Param('id') id: string, @Body() data: UpdateBookDto) {
+    return this.booksService.updateBook(id, data);
+  }
+
+  @Delete(':id')
+  deleteBook(@Param('id') id: string) {
+    return this.booksService.deleteBook(id);
   }
 }

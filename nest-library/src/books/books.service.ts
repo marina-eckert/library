@@ -1,37 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import { Book } from './book';
+import { CreateBookDto, UpdateBookDto } from './book.dto';
 
 @Injectable()
 export class BooksService {
-  private readonly books: Book[] = [
-    {
-      id: 1,
-      title: 'Мастер и Маргарита',
-      description: 'Роман Михаила Булгакова',
-      authors: 'Михаил Булгаков',
-      favorite: false,
-      fileCover: '',
-      fileName: '',
-      fileBook: '',
-    },
-    {
-      id: 2,
-      title: 'Евгений Онегин',
-      description: 'Роман в стихах',
-      authors: 'Александр Пушкин',
-      favorite: true,
-      fileCover: '',
-      fileName: '',
-      fileBook: '',
-    },
-  ];
+  constructor(
+    @InjectModel(Book.name) private readonly bookModel: Model<Book>,
+  ) {}
 
-  getBooks(): Book[] {
-    return this.books.map((book) => ({ ...book }));
+  getBooks() {
+    return this.bookModel.find().exec();
   }
 
-  getBook(id: number): Book | undefined {
-    const book = this.books.find((book) => book.id === id);
-    return book ? { ...book } : undefined;
+  private validateId(id: string): void {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Invalid book ID');
+    }
+  }
+
+  async getBook(id: string) {
+    this.validateId(id);
+    const book = await this.bookModel.findById(id).exec();
+    if (!book) throw new NotFoundException('Book not found');
+    return book;
+  }
+
+  createBook(data: CreateBookDto) {
+    return this.bookModel.create(data);
+  }
+
+  async updateBook(id: string, data: UpdateBookDto) {
+    this.validateId(id);
+    const book = await this.bookModel
+      .findByIdAndUpdate(
+        id,
+        { $set: data },
+        {
+          new: true,
+          runValidators: true,
+        },
+      )
+      .exec();
+    if (!book) throw new NotFoundException('Book not found');
+    return book;
+  }
+
+  async deleteBook(id: string) {
+    this.validateId(id);
+    const book = await this.bookModel.findByIdAndDelete(id).exec();
+    if (!book) throw new NotFoundException('Book not found');
+    return book;
   }
 }
